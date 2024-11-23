@@ -19,8 +19,9 @@ public class StudentPayment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "student_id", nullable = false)
-    private Long studentId; // Foreign key to Student
+    @ManyToOne(optional = false) // Many student bills can refer to one student
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student; // Foreign key to Student
 
     @Column(name = "description")
     private String description;
@@ -31,6 +32,7 @@ public class StudentPayment {
     @Column(name = "payment_date", nullable = false)
     private LocalDate paymentDate;
 
-    @Column(name = "bill_id", nullable = false)
-    private Long billId; // Foreign key to Bills
+    @ManyToOne(optional = false) // One bill can be mapped to only one student
+    @JoinColumn(name = "bill_id", nullable = false)
+    private Bills billId; // Foreign key to Bills
 }

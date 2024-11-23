@@ -29,6 +29,9 @@ public class Student {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "photograph_path")
     private String photographPath;
 
