@@ -21,14 +21,22 @@ const PaymentModal = ({ isOpen, onClose, billId, totalDue, creditBalance,student
     try {
       const paymentAmount =
         paymentType === "total"
-          ? adjustedDue + (useCredit ? creditBalance : 0) // Include credit if applicable
-          : parseFloat(customAmount) + (useCredit ? creditBalance : 0); // Custom amount + credit
+          ? totalDue // Include credit if applicable
+          : parseFloat(customAmount); // Custom amount + credit
+      
+      
+      
+      
   
+
       const paymentData = {
         studentId,
         billId,
         amount: paymentAmount, // Total payment amount
         useCredit, // Inform backend if credit is used
+        useTotal: paymentType === "total",
+        creditBalance, // Credit balance
+        totalDue // Total payment amount
       };
   
       await axios.post(`/api/v1/payments`, paymentData);
@@ -71,7 +79,7 @@ const PaymentModal = ({ isOpen, onClose, billId, totalDue, creditBalance,student
               name="paymentType"
               value="total"
               checked={paymentType === "total"}
-              onChange={() => setPaymentType("total")}
+              onChange={(e) => setPaymentType("total")}
               className="form-radio"
             />
             <span>Pay Total Amount</span>

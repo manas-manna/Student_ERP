@@ -27,6 +27,10 @@ public class PaymentService {
     public void processPayment(PaymentRequest paymentRequest) {
         Long studentId = paymentRequest.studentId();
         Long billId = paymentRequest.billId();
+        Double dueAmount = paymentRequest.totalDue();
+        Double customAmount = paymentRequest.amount();
+        Boolean isCreditSelected = paymentRequest.useCredit();
+        Boolean isTotalSelected = paymentRequest.useTotal();
 
         // Fetch the student and bill
         Student student = studentRepository.findById(studentId)
@@ -38,45 +42,65 @@ public class PaymentService {
         CreditBalance creditBalance = creditBalanceRepository.findByStudent_StudentId(studentId)
                 .orElseGet(() -> {
                     CreditBalance newBalance = new CreditBalance(student, 0.0);
-                    System.out.println("Printing new balance"+newBalance);
                     creditBalanceRepository.save(newBalance);
                     return newBalance;
                 });
+        Double creditAmount = creditBalance.getBalance();
 
-        double remainingAmount = paymentRequest.amount();
-        boolean useCredit = paymentRequest.useCredit();
-
-        // Deduct credit balance if applicable
-        if (useCredit && creditBalance.getBalance() > 0) {
-            if (creditBalance.getBalance() >= remainingAmount) {
-                // Credit fully covers the payment
-                creditBalance.setBalance(creditBalance.getBalance() - remainingAmount);
-                remainingAmount = 0.0;
-            } else {
-                // Partial credit usage
-                remainingAmount -= creditBalance.getBalance();
-                creditBalance.setBalance(0.0);
-            }
-            creditBalanceRepository.save(creditBalance); // Save after updating
-        }
 
         // Save the payment record
         StudentPayment payment = new StudentPayment();
         payment.setStudent(student);
         payment.setBillId(bill);
         payment.setDescription("Payment for bill ID " + billId);
-        payment.setAmount(paymentRequest.amount());
+        if(isCreditSelected) {
+            payment.setAmount(paymentRequest.amount()+creditAmount);
+        }else{
+            payment.setAmount(paymentRequest.amount());
+        }
         payment.setPaymentDate(LocalDate.now());
         studentPaymentRepository.save(payment);
 
-        // Handle overpayment
-        if (remainingAmount < 0) {
-            double overpayment = Math.abs(remainingAmount);
-            creditBalance.setBalance(creditBalance.getBalance() + overpayment); // Add to credit balance
-            creditBalanceRepository.save(creditBalance); // Always save updated balance
+
+
+        //updating the credit balance as per all the conditions
+        if(isTotalSelected) {
+            if(isCreditSelected){
+                if(creditAmount>dueAmount){
+                    creditAmount = creditAmount - dueAmount;
+                    dueAmount = 0.0;
+                }else{
+                    dueAmount = dueAmount - creditAmount;
+                    creditAmount = 0.0;
+                }
+            }
+        }else{
+            if(isCreditSelected){
+                if(creditAmount>dueAmount){
+                    creditAmount = creditAmount - dueAmount;
+                    dueAmount = 0.0;
+                    creditAmount = creditAmount + customAmount;
+                }else{
+                    dueAmount = dueAmount - creditAmount;
+                    creditAmount = 0.0;
+                    if(dueAmount<customAmount){
+                        creditAmount = customAmount - dueAmount;
+                    }
+                }
+            }else{
+                if(dueAmount<customAmount){
+                    customAmount = customAmount - dueAmount;
+                    dueAmount = 0.0;
+                    creditAmount = customAmount;
+                }else{
+                    dueAmount = dueAmount - customAmount;
+                    customAmount = 0.0;
+                }
+            }
         }
 
-        // Always save credit balance to ensure persistence
+        creditBalance.setBalance(creditAmount);
         creditBalanceRepository.save(creditBalance);
+
     }
 }
