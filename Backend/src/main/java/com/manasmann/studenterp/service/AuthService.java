@@ -29,7 +29,7 @@ public class AuthService {
             throw new RuntimeException("Invalid roll number or password");
         }
 
-        String token = JWTHelper.generateToken(student.getRollNumber());
+        String token = JWTHelper.generateToken(String.valueOf(student.getStudentId()));
 
         return new LoginResponse(student.getStudentId(),student.getFirstName(), student.getRollNumber(), "Login successful", token);
     }
@@ -44,7 +44,7 @@ public class AuthService {
             throw new RuntimeException("Invalid email or password");
         }
 
-        String token = JWTHelper.generateToken(admin.getEmail());
+        String token = JWTHelper.generateToken(String.valueOf(admin.getId()));
 
         return new LoginResponse(admin.getId(),admin.getFirstName(), admin.getEmail(), "Login successful", token);
     }

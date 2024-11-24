@@ -6,10 +6,13 @@ import com.manasmann.studenterp.entity.Bills;
 import com.manasmann.studenterp.entity.CreditBalance;
 import com.manasmann.studenterp.entity.Student;
 import com.manasmann.studenterp.entity.StudentPayment;
+import com.manasmann.studenterp.exception.UnauthorisedAccessException;
 import com.manasmann.studenterp.repo.*;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,6 +22,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
+
+    @Autowired
+    private HttpServletRequest request;
 
     private final StudentPaymentRepository studentPaymentRepository;
     private final CreditBalanceRepository creditBalanceRepository;
@@ -34,6 +40,11 @@ public class PaymentService {
         Double customAmount = paymentRequest.amount();
         Boolean isCreditSelected = paymentRequest.useCredit();
         Boolean isTotalSelected = paymentRequest.useTotal();
+
+        String AuthenticatedId = (String)request.getAttribute("AuthenticatedIdentifier");
+        if(!AuthenticatedId.equals(String.valueOf(studentId))){
+            throw new UnauthorisedAccessException("You can only process your payments.");
+        }
 
         // Fetch the student and bill
         Student student = studentRepository.findById(studentId)
@@ -108,6 +119,11 @@ public class PaymentService {
 
 
 public List<PaymentHistoryResponse> getPaymentHistoryForStudent(Long studentId) {
+
+    String AuthenticatedId = (String)request.getAttribute("AuthenticatedIdentifier");
+    if(!AuthenticatedId.equals(String.valueOf(studentId))){
+        throw new UnauthorisedAccessException("You can only process your payments.");
+    }
 
     Student student = studentRepository.findById(studentId)
             .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));

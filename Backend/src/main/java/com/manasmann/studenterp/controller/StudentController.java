@@ -32,8 +32,8 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping("/bills/{studentId}")
-    public ResponseEntity<List<AllBillResponse>> getBillsByStudentId(@PathVariable Long studentId,@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+    @GetMapping("/bills")
+    public ResponseEntity<List<AllBillResponse>> getBillsByStudentId(@RequestHeader("studentId") Long studentId) {
 
         List<AllBillResponse> bills = studentService.getBillsByStudentId(studentId);
         return ResponseEntity.ok(bills);

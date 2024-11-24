@@ -4,12 +4,15 @@ import com.manasmann.studenterp.dto.AllBillResponse;
 import com.manasmann.studenterp.dto.BillResponse;
 import com.manasmann.studenterp.dto.GetAllStudentResponse;
 import com.manasmann.studenterp.entity.*;
+import com.manasmann.studenterp.exception.UnauthorisedAccessException;
 import com.manasmann.studenterp.mapper.BillsMapper;
 import com.manasmann.studenterp.mapper.StudentMapper;
 import com.manasmann.studenterp.repo.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,9 @@ public class StudentService {
     private final BillsRepository billsRepository;
     private final CreditBalanceRepository creditBalanceRepository;
     private final StudentPaymentRepository studentPaymentRepository;
+
+    @Autowired
+    private HttpServletRequest request;
 
     public Student createStudent(Student student) {
         String hashedPassword = passwordEncoder.encode(student.getPassword());
@@ -44,6 +50,13 @@ public class StudentService {
     public List<AllBillResponse> getBillsByStudentId(Long studentId) {
         // Fetch all bill IDs associated with the student
         List<StudentBills> studentBills = studentBillsRepository.findByStudent_StudentId(studentId);
+
+
+        String AuthenticatedId = (String)request.getAttribute("AuthenticatedIdentifier");
+        if(!AuthenticatedId.equals(String.valueOf(studentId))){
+            throw new UnauthorisedAccessException("You can only process your payments.");
+        }
+
 
         // Extract the associated bills from the StudentBills entities
         List<Bills> bills = studentBills.stream()

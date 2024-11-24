@@ -26,8 +26,8 @@ public class PaymentController {
             return ResponseEntity.ok("Payment processed successfully");
     }
 
-    @GetMapping("/{studentId}")
-    public ResponseEntity<List<PaymentHistoryResponse>> getPaymentHistory(@PathVariable Long studentId) {
+    @GetMapping
+    public ResponseEntity<List<PaymentHistoryResponse>> getPaymentHistory(@RequestHeader("studentId") Long studentId) {
         List<PaymentHistoryResponse> paymentHistory = paymentService.getPaymentHistoryForStudent(studentId);
         return ResponseEntity.ok(paymentHistory);
     }

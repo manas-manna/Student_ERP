@@ -42,8 +42,12 @@ const StudentPage = () => {
     // Fetch bills and credit balance for the student
     const fetchStudentData = async () => {
       try {
-        const billsResponse = await axios.get(`/api/v1/students/bills/${user.id}`);
-        const paymentsResponse = await axios.get(`/api/v1/payments/${user.id}`);
+        const billsResponse = await axios.get(`/api/v1/students/bills`,{
+          headers: { studentId: user.id }
+        });
+        const paymentsResponse = await axios.get(`/api/v1/payments`,{
+          headers: { studentId: user.id }
+        });
         
         setBills(billsResponse.data);
         setPayments(paymentsResponse.data);
@@ -69,8 +73,13 @@ const StudentPage = () => {
     setSelectedBill(null); // Close the modal
     try {
       // Refresh the bills and payment history after payment
-      const billsResponse = await axios.get(`/api/v1/students/bills/${student.id}`);
-      const paymentsResponse = await axios.get(`/api/v1/payments/${student.id}`);
+      const billsResponse = await axios.get(`/api/v1/students/bills`,{
+        headers: { studentId: student.id }
+      });
+      const paymentsResponse = await axios.get(`/api/v1/payments`,{
+        headers: { studentId: student.id }
+      });
+      
       setBills(billsResponse.data);
       setPayments(paymentsResponse.data);
 
