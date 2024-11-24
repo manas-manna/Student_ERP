@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "../api/api";
-// import { useNavigate } from "react-router-dom";
 
 const PaymentModal = ({ isOpen, onClose, billId, totalDue, creditBalance,studentId }) => {
   const [useCredit, setUseCredit] = useState(false);

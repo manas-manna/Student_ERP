@@ -12,10 +12,14 @@ const LoginPage = () => {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user")); // Parse the stored user data
-    if (user && user.identifier?.startsWith("MT")) {
-      navigate("/student"); // Navigate to the student page
-    }else if (user){
-      navigate("/admin"); // Navigate to the admin page
+    if (user) {
+      if(user.identifier?.startsWith("MT")){
+        navigate("/student"); // Redirect to admin page if not a student
+        return;
+      }else{
+        navigate("/admin"); // Redirect to student page if a student
+        return;
+      }
     }
   }, [navigate]);
 

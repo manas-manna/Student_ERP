@@ -35,13 +35,6 @@ public class StudentController {
     @GetMapping("/bills/{studentId}")
     public ResponseEntity<List<AllBillResponse>> getBillsByStudentId(@PathVariable Long studentId,@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
 
-        // Log the Authorization header
-//        if (authorizationHeader != null) {
-//            System.out.println("Authorization Header: " + authorizationHeader);
-//        } else {
-//            System.out.println("Authorization Header is missing.");
-//        }
-
         List<AllBillResponse> bills = studentService.getBillsByStudentId(studentId);
         return ResponseEntity.ok(bills);
     }

@@ -1,5 +1,6 @@
 package com.manasmann.studenterp.service;
 
+import com.manasmann.studenterp.dto.PaymentHistoryResponse;
 import com.manasmann.studenterp.dto.PaymentRequest;
 import com.manasmann.studenterp.entity.Bills;
 import com.manasmann.studenterp.entity.CreditBalance;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +55,7 @@ public class PaymentService {
         StudentPayment payment = new StudentPayment();
         payment.setStudent(student);
         payment.setBillId(bill);
-        payment.setDescription("Payment for bill ID " + billId);
+        payment.setDescription("Payment for " + bill.getDescription());
         if(isCreditSelected) {
             payment.setAmount(paymentRequest.amount()+creditAmount);
         }else{
@@ -60,7 +63,6 @@ public class PaymentService {
         }
         payment.setPaymentDate(LocalDate.now());
         studentPaymentRepository.save(payment);
-
 
 
         //updating the credit balance as per all the conditions
@@ -103,4 +105,20 @@ public class PaymentService {
         creditBalanceRepository.save(creditBalance);
 
     }
+
+
+public List<PaymentHistoryResponse> getPaymentHistoryForStudent(Long studentId) {
+
+    Student student = studentRepository.findById(studentId)
+            .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+    List<StudentPayment> payments = studentPaymentRepository.findByStudent_StudentId(studentId);
+    return payments.stream()
+            .map(payment -> new PaymentHistoryResponse(
+                    payment.getId(),
+                    payment.getAmount(),
+                    payment.getDescription(),
+                    payment.getPaymentDate()
+            ))
+            .collect(Collectors.toList());
+}
 }

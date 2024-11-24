@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 import Navbar from "./Navbar";
 
 const AdminPage = () => {
+  const navigate = useNavigate();
   const [admin, setAdmin] = useState({ firstName: "", email: "" });
   const [students, setStudents] = useState([]);
   const [selectedStudentId, setSelectedStudentId] = useState("");
@@ -12,16 +14,24 @@ const AdminPage = () => {
   const [dueDate, setDueDate] = useState("");
   const [deadline, setDeadline] = useState("");
 
+
   // Fetch admin and students from the backend
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
+    
+    if (!user) {
+      navigate("/"); // Redirect to admin page if not a student
+      return;
+    }else if(user.identifier?.startsWith("MT")){
+      navigate("/student"); // Redirect to admin page if not a student
+      return;
+    }
+
+
       setAdmin({
         firstName: user.firstName,
         email: user.identifier,
       });
-    }
-
 
     //Fetch all students for the dropdown
     const fetchStudents = async () => {
