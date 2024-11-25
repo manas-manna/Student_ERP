@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Table(name = "bills")
 public class Bills {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "description")

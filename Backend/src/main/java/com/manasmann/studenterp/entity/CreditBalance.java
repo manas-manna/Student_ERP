@@ -19,7 +19,7 @@ public class CreditBalance {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student; // Reference to the Student entity
 
-    @Column(nullable = false)
+    @Column(name = "balance",nullable = false)
     private Double balance = 0.00; // Credit balance with a default value
 
 

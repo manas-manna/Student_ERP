@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Table(name = "student_payment")
 public class StudentPayment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false) // Many student bills can refer to one student

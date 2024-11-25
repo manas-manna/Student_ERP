@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "student_bills")
 public class StudentBills {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false) // Many student bills can refer to one student

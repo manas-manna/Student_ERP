@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "student")
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long studentId;
 
     @Column(name = "roll_number", unique = true, nullable = false)
