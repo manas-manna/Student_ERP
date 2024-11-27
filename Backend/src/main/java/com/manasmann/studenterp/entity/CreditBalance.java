@@ -22,10 +22,4 @@ public class CreditBalance {
     @Column(name = "balance",nullable = false)
     private Double balance = 0.00; // Credit balance with a default value
 
-
-    // Constructor to create a new credit balance entry
-    public CreditBalance(Student student, Double balance) {
-        this.student = student;
-        this.balance = balance;
-    }
 }

@@ -102,7 +102,7 @@ const AdminPage = () => {
               <option value="">-- Select a student --</option>
               {students.map((student) => (
                 <option key={student.studentId} value={student.studentId}>
-                  {student.rollNumber} {/* Display roll number in the dropdown */}
+                  {student.rollNumber}( {student.name} )
                 </option>
               ))}
             </select>

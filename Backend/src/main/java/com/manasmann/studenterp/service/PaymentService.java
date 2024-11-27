@@ -55,7 +55,10 @@ public class PaymentService {
         // Fetch or create a new credit balance
         CreditBalance creditBalance = creditBalanceRepository.findByStudent_StudentId(studentId)
                 .orElseGet(() -> {
-                    CreditBalance newBalance = new CreditBalance(student, 0.0);
+                    CreditBalance newBalance = CreditBalance.builder()
+                            .student(student)
+                            .balance(0.0) // Default balance
+                            .build();
                     creditBalanceRepository.save(newBalance);
                     return newBalance;
                 });

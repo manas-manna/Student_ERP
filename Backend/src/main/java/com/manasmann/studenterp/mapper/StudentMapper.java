@@ -12,8 +12,13 @@ public class StudentMapper {
                 .lastName(student.getLastName())
                 .email(student.getEmail())
                 .password(hashedPassword) // Use hashed password
+                .photographPath(student.getPhotographPath()) // Include photograph path
+                .cgpa(student.getCgpa()) // Include CGPA
+                .totalCredits(student.getTotalCredits()) // Include total credits
+                .graduationYear(student.getGraduationYear()) // Include graduation year
                 .specialisationId(student.getSpecialisationId())
                 .domainId(student.getDomainId())
+                .placementId(student.getPlacementId()) // Don't forget placementId
                 .build();
     }
 }

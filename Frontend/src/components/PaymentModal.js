@@ -1,52 +1,18 @@
-import React, { useState, useEffect } from "react";
-import axios from "../api/api";
+import React from "react";
 
-const PaymentModal = ({ isOpen, onClose, billId, totalDue, creditBalance,studentId }) => {
-  const [useCredit, setUseCredit] = useState(false);
-  const [paymentType, setPaymentType] = useState("total");
-  const [customAmount, setCustomAmount] = useState("");
-  const [adjustedDue, setAdjustedDue] = useState(totalDue);
+import usePaymentMethod from "../hooks/usePaymentMethod";
 
-  // Adjust the total due dynamically based on `useCredit`
-  useEffect(() => {
-    if (useCredit) {
-      setAdjustedDue(Math.max(0, totalDue - creditBalance)); // Ensure non-negative due
-    } else {
-      setAdjustedDue(totalDue);
-    }
-  }, [useCredit, totalDue, creditBalance]);
+const PaymentModal = ({ isOpen, onClose, billId, totalDue, creditBalance, studentId }) => {
 
-  const handlePayment = async () => {
-    try {
-      const paymentAmount =
-        paymentType === "total"
-          ? totalDue // Include credit if applicable
-          : parseFloat(customAmount); // Custom amount + credit
-      
-      
-      
-      
-  
+  const { useCredit,
+    setUseCredit,
+    paymentType,
+    setPaymentType,
+    customAmount,
+    setCustomAmount,
+    adjustedDue,
+    handlePayment } = usePaymentMethod(isOpen, onClose, billId, totalDue, creditBalance, studentId);
 
-      const paymentData = {
-        studentId,
-        billId,
-        amount: paymentAmount, // Total payment amount
-        useCredit, // Inform backend if credit is used
-        useTotal: paymentType === "total",
-        creditBalance, // Credit balance
-        totalDue // Total payment amount
-      };
-  
-      await axios.post(`/api/v1/payments`, paymentData);
-  
-      alert("Payment successful!");
-      onClose();
-    } catch (error) {
-      console.error("Error processing payment:", error);
-      alert("Payment failed!");
-    }
-  };
 
   if (!isOpen) return null;
 

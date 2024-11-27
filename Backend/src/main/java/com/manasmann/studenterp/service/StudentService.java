@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,11 @@ public class StudentService {
     public List<GetAllStudentResponse> getAllStudents() {
         return studentRepository.findAll()
                 .stream()
-                .map(student -> new GetAllStudentResponse(student.getStudentId(), student.getRollNumber()))
+                .map(student -> new GetAllStudentResponse(
+                        student.getStudentId(),
+                        student.getRollNumber(),
+                        student.getFirstName() + " " + student.getLastName()))
+                .sorted(Comparator.comparing(GetAllStudentResponse::rollNumber)) // Sort by rollNumber
                 .toList();
     }
 
@@ -82,8 +87,7 @@ public class StudentService {
                             .mapToDouble(StudentPayment::getAmount)
                             .sum();
 
-                    // Check if the total payments are less than the bill amount
-                    return totalPaid < bill.getAmount(); // Only include bills that are not fully paid
+                    return totalPaid < bill.getAmount(); 
                 })
                 .map(bill -> {
                     // Fetch all payments for the current bill

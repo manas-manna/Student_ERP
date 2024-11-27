@@ -1,7 +1,6 @@
 package com.manasmann.studenterp.repo;
 
 import com.manasmann.studenterp.entity.Bills;
-import com.manasmann.studenterp.entity.Student;
 import com.manasmann.studenterp.entity.StudentPayment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

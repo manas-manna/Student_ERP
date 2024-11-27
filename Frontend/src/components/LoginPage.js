@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../api/api";
+import useLoginMethod from "../hooks/useLoginMethod";
 
 const LoginPage = () => {
-  const [userType, setUserType] = useState("student");
-  const [identifier, setIdentifier] = useState(""); // Can be roll number or email
-  const [password, setPassword] = useState("");
+  const {userType, setUserType,identifier, setIdentifier,password, setPassword, handleLogin} = useLoginMethod();
+  
   const navigate = useNavigate();
-
-
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user")); // Parse the stored user data
@@ -22,27 +19,6 @@ const LoginPage = () => {
       }
     }
   }, [navigate]);
-
-
-    const handleLogin = async () => {
-        const endpoint = userType === "admin" ? "/api/v1/auth/admin" : "/api/v1/auth/student";
-        const payload =
-        userType === "admin"
-            ? { identifier: identifier, password }
-            : { identifier: identifier, password };
-
-        try {
-            
-        const response = await axios.post(endpoint, payload);
-        
-        localStorage.setItem("user", JSON.stringify(response.data));
-        localStorage.setItem("token", response.data.token);
-
-        navigate(`/${userType}`);
-        } catch (error) {
-        alert("Login failed: " + (error.response?.data?.message || "Unknown error"));
-        }
-    };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

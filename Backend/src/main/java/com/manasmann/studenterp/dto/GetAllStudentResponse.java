@@ -2,6 +2,7 @@ package com.manasmann.studenterp.dto;
 
 public record GetAllStudentResponse(
         Long studentId,
-        String rollNumber
+        String rollNumber,
+        String name
 ) {
 }

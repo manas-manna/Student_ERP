@@ -34,7 +34,6 @@ public class StudentController {
 
     @GetMapping("/bills")
     public ResponseEntity<List<AllBillResponse>> getBillsByStudentId(@RequestHeader("studentId") Long studentId) {
-
         List<AllBillResponse> bills = studentService.getBillsByStudentId(studentId);
         return ResponseEntity.ok(bills);
     }

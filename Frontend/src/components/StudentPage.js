@@ -1,92 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React  from "react";
 import Navbar from "./Navbar";
-import axios from "../api/api";
-import { useNavigate } from "react-router-dom";
+
 import PaymentModal from "./PaymentModal"; // Import the PaymentModal component
 import PaymentHistory from "./PaymentHistory";
+import useStudentDetails from "../hooks/useStudentDetails";
 
 
 
 const StudentPage = () => {
-  const [student, setStudent] = useState({});
-  const [bills, setBills] = useState([]);
-  const [payments, setPayments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedBill, setSelectedBill] = useState(null); // State to manage the selected bill for the modal
-  const [creditBalance, setCreditBalance] = useState(0); // State to store credit balance
-  const navigate = useNavigate();
-  
-  
-  useEffect(() => {
-    // Fetch student details from localStorage
-    
-    const user = JSON.parse(localStorage.getItem("user"));
+  const { loading, handleClosePaymentModal, handleOpenPaymentModal,payments,bills,student, creditBalance,selectedBill }  = useStudentDetails();  
 
 
-    if (!user) {
-      navigate("/"); // Redirect to admin page if not a student
-      return;
-    }else if(!user.identifier?.startsWith("MT")){
-      navigate("/admin"); // Redirect to admin page if not a student
-      return;
-    }
-    
-    setStudent({
-      firstName: user.firstName,
-      email: user.identifier,
-      id: user.id,
-    });
-  
-  
-
-    // Fetch bills and credit balance for the student
-    const fetchStudentData = async () => {
-      try {
-        const billsResponse = await axios.get(`/api/v1/students/bills`,{
-          headers: { studentId: user.id }
-        });
-        const paymentsResponse = await axios.get(`/api/v1/payments`,{
-          headers: { studentId: user.id }
-        });
-        
-        setBills(billsResponse.data);
-        setPayments(paymentsResponse.data);
-        if(billsResponse.data.length !== 0) setCreditBalance(billsResponse.data[0].creditBalance);
-
-      
-      } catch (error) {
-        console.error("Error fetching student data:", error);
-        alert("Failed to load student data.",error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStudentData();
-  }, []);
-
-  const handleOpenPaymentModal = (bill) => {
-    setSelectedBill(bill); // Set the selected bill for the modal
-  };
-
-  const handleClosePaymentModal = async () => {
-    setSelectedBill(null); // Close the modal
-    try {
-      // Refresh the bills and payment history after payment
-      const billsResponse = await axios.get(`/api/v1/students/bills`,{
-        headers: { studentId: student.id }
-      });
-      const paymentsResponse = await axios.get(`/api/v1/payments`,{
-        headers: { studentId: student.id }
-      });
-      
-      setBills(billsResponse.data);
-      setPayments(paymentsResponse.data);
-
-    } catch (error) {
-      console.error("Error refreshing bills:", error);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-100">

@@ -1,6 +1,6 @@
 create database student;
 use student;
-
+--  ADMIN table
 CREATE TABLE admin (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -9,7 +9,17 @@ CREATE TABLE admin (
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE student (
+-- Bill table
+CREATE TABLE bills (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    description VARCHAR(255),
+    amount DOUBLE NOT NULL,
+    due_date DATE,
+    deadline DATE
+);
+
+ -- Student table
+ CREATE TABLE student (
     student_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     roll_number VARCHAR(255) UNIQUE NOT NULL,
     first_name VARCHAR(255),
@@ -25,36 +35,26 @@ CREATE TABLE student (
     placement_id BIGINT
 );
 
-CREATE TABLE bills (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    description VARCHAR(255),
-    amount DOUBLE NOT NULL,
-    due_date DATE,
-    deadline DATE
-);
-
-CREATE TABLE credit_balance (
+ -- Credit balance table
+ CREATE TABLE credit_balance (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     student_id BIGINT NOT NULL,
-    balance DOUBLE NOT NULL DEFAULT 0.00,
-    CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE
+    balance DOUBLE NOT NULL DEFAULT 0.00
 );
 
+ -- Student bills table
 CREATE TABLE student_bills (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     student_id BIGINT NOT NULL,
-    bill_id BIGINT NOT NULL,
-    CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
-    CONSTRAINT fk_bill FOREIGN KEY (bill_id) REFERENCES bills(id) ON DELETE CASCADE
+    bill_id BIGINT NOT NULL
 );
 
-CREATE TABLE student_payment (
+ -- Student Payment
+ CREATE TABLE student_payment (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     student_id BIGINT NOT NULL,
     description VARCHAR(255),
     amount DOUBLE NOT NULL,
     payment_date DATE NOT NULL,
-    bill_id BIGINT NOT NULL,
-    CONSTRAINT fk_student_payment_student FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
-    CONSTRAINT fk_student_payment_bill FOREIGN KEY (bill_id) REFERENCES bills(id) ON DELETE CASCADE
+    bill_id BIGINT NOT NULL
 );

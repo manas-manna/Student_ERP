@@ -20,7 +20,7 @@ public class Student {
     @Column(name = "roll_number", unique = true, nullable = false)
     private String rollNumber;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @Column(name = "last_name")
